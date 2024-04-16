@@ -1,4 +1,48 @@
+#Castel
 
+import math
+proc deCasteljau(P: seq[(float, float)], n: int, u: float): (float, float) =
+  var Q: seq[(float, float)] = P
+
+  for i in 0..n:
+    Q[i] = P[i]
+
+  for k in 1..n:
+    for i in 0..n - k:
+      let x1 = (1.0 - u) * Q[i][0] + u * Q[i + 1][0]
+      let y1 = (1.0 - u) * Q[i][1] + u * Q[i + 1][1]
+      Q[i] = (x1, y1)
+
+
+#Bernstein
+
+proc Bernstein(i, n: int, u: float): float =    
+  var temp: seq[float] = newSeq[float](n+1)    
+  for j in 0..n:        
+    temp[j] = 3.0    
+  temp[n-i-1] = 1.0
+  var u1: float =1-u   
+  for k in 1..n:
+    echo k,"\n"     
+    for j in k..n-1:            
+      temp[n-j] = u1*temp[n-j] + u*temp[n-j-1]
+      echo "k= ", k,"\t","j=",n-j,"\t",temp[j], "\n"
+ 
+  #return temp[n]
+  var B: float = temp[n] 
+  echo "B = ", B,"\t .....done\n"
+
+
+#Algoritmo Bezier
+  result = Q[0]
+
+# Ejemplo de uso
+when isMainModule:
+  let P: seq[(float, float)] = @[(0.0, 0.0), (1.0, 3.0), (2.0, 1.0), (3.0, 4.0)]  # Puntos de control
+  let n = P.len - 1  # Grado de la curva de Bezier (número de puntos de control menos 1)
+  let u = 0.2  # Valor del parámetro
+  let C = deCasteljau(P, n, u)
+  echo "El punto en la curva de Bezier es: ", C
 proc horner(u: float64, a: seq[float64]): float64 =
   var c: float64 = a[a.len() - 1]
   echo "c[", a.len() - 1, "]=", c, "\n"
@@ -10,3 +54,20 @@ proc horner(u: float64, a: seq[float64]): float64 =
 var a: seq[float64] = @[1.0, 2.0, 2.0, -3, -3.0, 4.0, -10.0, 4.1, -10.0]
 var u: float64 = 0.5
 echo horner(u, a), ",", a.len()
+
+
+#Horner 
+proc horner(u: float64, a: seq[float64]): float64 =
+  var c: float64 = a[a.len() - 1]
+  echo "c[", a.len() - 1, "]=", c, "\n"
+  for i in 2 .. a.len():  # Cambio aquí: comienza desde 2 en lugar de 1
+    c = a[a.len() - i] + c * u
+    echo "c[", a.len() - i, "]=", c, "\n"
+  result = c
+
+var a: seq[float64] = @[1.0, 2.0, 2.0, -3, -3.0, 4.0, -10.0, 4.1, -10.0]
+var u: float64 = 0.5
+echo horner(u, a), ",", a.len()
+
+
+
